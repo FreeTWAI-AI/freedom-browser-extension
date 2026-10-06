@@ -8,8 +8,8 @@ import { createClock } from '../test/support/clock.ts';
 import { createFakePlatform } from '../test/support/fake-platform.ts';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const shots = '/home/ted-h/tmp-scratch/fp_work/clients-20261006/jobs/client-a1-scratch/shots';
-const resultPath = '/home/ted-h/tmp-scratch/fp_work/clients-20261006/jobs/client-a1-scratch/browser-result.json';
+const shots = path.join(root, 'test-results', 'shots');
+const resultPath = path.join(root, 'test-results', 'browser-result.json');
 
 function run(command, args) {
   return new Promise((resolve, reject) => {
