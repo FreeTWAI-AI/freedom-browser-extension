@@ -1,8 +1,35 @@
 {
-  "name": "@freetwai/freedom-project-template",
-  "version": "0.1.0-preview",
+  "name": "freedom-browser-extension",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=24 <25" },
-  "scripts": { "test": "node --test", "build": "node scripts/build.mjs", "dev": "node src/server.mjs" }
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "pretest": "node scripts/build.mjs all",
+    "test": "node --experimental-strip-types --test --test-reporter=spec \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "build": "node scripts/build.mjs staging",
+    "build:production": "node scripts/build.mjs production",
+    "build:e2e": "node scripts/build.mjs e2e",
+    "test:browser": "node --experimental-strip-types scripts/test-browser.mjs"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/chrome": "^0.1.1",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^4.7.0",
+    "typescript": "^5.9.2",
+    "vite": "^6.3.6"
+  },
+  "overrides": {
+    "rollup": "4.63.6"
+  }
 }

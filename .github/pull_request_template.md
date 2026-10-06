@@ -11,8 +11,12 @@ Issue：<!-- 連結本 repo 的 Issue；只有確實完成時才使用 Closes #�
 
 <!-- 列出實際執行的命令或人工步驟與結果；如有未執行／失敗項目，說明原因。 -->
 
+- `npm run typecheck`：
 - `npm test`：
 - `npm run build`：
+- `npm run build:production`：
+- `node scripts/verify-contracts.mjs`：
+- `python3 scripts/verify-project-manifest.py`：
 - 本任務的其他驗證／成果連結：
 
 ## 協作與來源
