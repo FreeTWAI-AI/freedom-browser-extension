@@ -1,28 +1,34 @@
 {
   "schema_version": "freedom.project/v1",
   "kind": "Project",
-  "project_id": "project:freedom-project-template",
-  "slug": "freedom-project-template",
-  "name": "Freedom Project Template",
-  "summary": "Node project starter with a local preview and a pinned Platform contract bundle.",
+  "project_id": "project:freedom-browser-extension",
+  "slug": "freedom-browser-extension",
+  "name": "Freedom Browser Extension",
+  "summary": "Chrome extension that pairs a browser to Freedom Workshop with session-only bootstrap credentials.",
   "project_type": "application",
   "lifecycle": "incubating",
   "description": {
-    "problem": "Node project starter with a local preview and a pinned Platform contract bundle.",
+    "problem": "Members need a standard Chrome extension that can pair a browser to Freedom Workshop, hold only session-scoped bootstrap credentials, and reject untyped or cross-site messages. This repository is that extension. It does not run models or act on page DOM yet.",
     "audiences": [
-      "Freedom members",
-      "maintainers and contributors"
+      "Freedom Workshop members pairing a browser",
+      "Maintainers of the extension"
     ],
     "capabilities": [
-      "Build and test a minimal local Node application",
-      "Start a separately identified project using the Platform protocol"
+      "Pair this browser with Freedom Workshop using the device-authorization bootstrap and DPoP proofs",
+      "Keep access and refresh tokens in chrome.storage.session and a nonextractable device key in IndexedDB",
+      "Validate extension messages by schema, sender, frame, document, origin and session epoch",
+      "Grant or remove site host permissions one origin at a time from a side-panel gesture",
+      "Show extension_byok as available without a Native Host, and extension_cli as missing when no host answers"
     ],
     "limitations": [
-      "A generated project must replace repository identity and retain applicable source lineage",
-      "No cloud deployment or inherited official status",
-      "Quality and release fields declare intended policy; they do not attest an enforced ruleset or a signed release",
-      "NOASSERTION means licensing remains undecided; this metadata grants no additional reuse rights",
-      "github_pages is the intended project-page surface only; Pages and production remain unpublished"
+      "No Native Host, DOM actions, durable journal, Stop or takeover, model runs, store listing or deployment",
+      "client_id freedom-browser-extension is a placeholder until the platform registers an extension client",
+      "Session tokens live only in chrome.storage.session. The manifest schema cannot name that store; they are not the plaintext file-cache exception",
+      "The device key is a nonextractable P-256 CryptoKey in IndexedDB. credential_root_key_storage client_owned names that client key, not a PostgreSQL vault",
+      "No provider keys, customer data or payment data are stored",
+      "A browser restart drops session tokens and requires pairing again. No hardware attestation or OS isolation is claimed",
+      "NOASSERTION means licensing is undecided; this metadata grants no reuse rights",
+      "Quality and release fields declare policy only. They are not a signed release or a store review"
     ]
   },
   "ownership": {
@@ -49,23 +55,34 @@
     "security_contact": "https://github.com/teddashh"
   },
   "repository": {
-    "full_name": "FreeTWAI-AI/freedom-project-template",
-    "html_url": "https://github.com/FreeTWAI-AI/freedom-project-template",
-    "repository_id": "1378081612",
+    "full_name": "FreeTWAI-AI/freedom-browser-extension",
+    "html_url": "https://github.com/FreeTWAI-AI/freedom-browser-extension",
+    "repository_id": "1407511348",
     "default_branch": "main",
     "visibility": "public",
     "is_fork": false,
     "upstream": null,
-    "creation_method": "original",
-    "source_lineage": []
+    "creation_method": "template",
+    "source_lineage": [
+      {
+        "relation": "template_source",
+        "source_project_id": "project:freedom-project-template",
+        "source_repository_id": "1378081612",
+        "full_name": "FreeTWAI-AI/freedom-project-template",
+        "html_url": "https://github.com/FreeTWAI-AI/freedom-project-template",
+        "based_on_commit": "9bc7cee3f98d21da3156e5a67bfa63dc63a4615e",
+        "license_spdx_expression": "NOASSERTION",
+        "license_notice_preserved": true
+      }
+    ]
   },
   "page": {
-    "publication": "github_pages",
+    "publication": "withheld",
     "requested_trust_label": "incubating",
     "source": "generated",
-    "canonical_platform_url": "https://staging.freetwai.com/",
-    "github_pages_url": "https://freetwai-ai.github.io/freedom-project-template/",
-    "exception_reason": null,
+    "canonical_platform_url": "https://freetwai.com/",
+    "github_pages_url": null,
+    "exception_reason": "No GitHub Pages site and no Chrome Web Store listing are published. This repository is extension source only.",
     "required_sections": [
       "identity_and_status",
       "problem_and_audience",
@@ -141,9 +158,9 @@
     "customer_data_mode": "none",
     "credential_reference_metadata_in_postgres": false,
     "dynamic_credential_storage": [
-      "none"
+      "client_owned"
     ],
-    "credential_root_key_storage": "none",
+    "credential_root_key_storage": "client_owned",
     "stores_payment_instrument_data": false,
     "stores_plaintext_credentials": false,
     "external_systems_of_record": [
@@ -170,9 +187,9 @@
     ]
   },
   "links": {
-    "documentation": "https://github.com/FreeTWAI-AI/freedom-project-template/blob/main/README.md",
+    "documentation": "https://github.com/FreeTWAI-AI/freedom-browser-extension/blob/main/README.md",
     "demo": null,
-    "support": "https://github.com/FreeTWAI-AI/freedom-project-template/issues",
-    "issues": "https://github.com/FreeTWAI-AI/freedom-project-template/issues"
+    "support": "https://github.com/FreeTWAI-AI/freedom-browser-extension/issues",
+    "issues": "https://github.com/FreeTWAI-AI/freedom-browser-extension/issues"
   }
 }

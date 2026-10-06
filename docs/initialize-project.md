@@ -1,5 +1,9 @@
 # Initialize a new independent project
 
+This repository has already been initialized as `project:freedom-browser-extension` (`FreeTWAI-AI/freedom-browser-extension`, repository id `1407511348`). `freedom.project.yaml` is that identity. The checklist below is the procedure that was followed. Do not copy the template repository's name, issues, or preview server back in.
+
+Licensing remains `NOASSERTION`. Do not add a `LICENSE` file or state a grant. Every deployment environment stays `provider: none`.
+
 1. Create the new repository from the template and read its real GitHub API identity. Record its stable repository ID, full name, visibility, owner and default branch.
 2. Choose a new `project_id` and slug. Replace this template's name, audience, capabilities, limitations and ownership with the new project's facts.
 3. Set `repository.creation_method: template`, `repository.is_fork: false`, `repository.upstream: null`. Record the source template's repository ID and full immutable commit under `source_lineage` with `relation: template_source`. Preserve source notices and confirm the source license; do not assert a grant that does not exist.
