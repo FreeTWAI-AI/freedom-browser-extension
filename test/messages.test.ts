@@ -76,7 +76,7 @@ function empty(epoch: number) {
   };
 }
 
-test('EXT-02 rejects wrong sender, frame, document, impersonation, and page postMessage', async () => {
+test('EXT-02 rejects the wrong sender, an impersonating content script, and page postMessage', async () => {
   const { router, calls } = buildRouter();
   const wrongId = await router.handle({ type: 'pairing.snapshot', epoch: 0 }, { ...page(), id: 'other-extension' });
   assert.equal(wrongId.ok, false);
@@ -108,50 +108,6 @@ test('EXT-02 rejects wrong sender, frame, document, impersonation, and page post
   });
   assert.equal(sunk, 0);
   assert.equal(calls.native, 0);
-});
-
-test('EXT-02 rejects the wrong frame and documentId before a session is trusted', async () => {
-  const seen: MessageSender[] = [];
-  const built = createRouter({
-    runtimeId,
-    platformOrigin: stagingProfile.origin,
-    pairingEpoch: () => 1,
-    async snapshot() {
-      return empty(1);
-    },
-    async begin() {
-      return empty(1);
-    },
-    async disconnect() {
-      return empty(1);
-    },
-    async openVerification() {
-      return empty(1);
-    },
-    async modes() {
-      return empty(1);
-    },
-    async startSite() {
-      return empty(1);
-    },
-    async removeSite() {
-      return empty(1);
-    },
-    async hello(sender) {
-      seen.push(sender);
-      if (sender.frameId !== 0 || sender.documentId !== 'doc-1') return { ok: false, error: 'frame' };
-      return { ok: true, boundEpoch: 2 };
-    },
-    async ping(sender) {
-      if (sender.frameId !== 0 || sender.documentId !== 'doc-1') return { ok: false, error: 'document' };
-      return { ok: true };
-    },
-  });
-  const frame = await built.handle({ type: 'site.hello' }, content({ frameId: 3 }));
-  assert.equal(frame.error, 'frame');
-  const document = await built.handle({ type: 'site.ping', epoch: 2 }, content({ documentId: 'other' }));
-  assert.equal(document.error, 'document');
-  assert.equal(seen.length, 1);
 });
 
 test('EXT-09 rejects JSON that carries JS, eval, or a remote handler', async () => {

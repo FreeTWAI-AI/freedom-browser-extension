@@ -17,6 +17,16 @@ function panel(epoch: number): MessageSender {
   return { id: runtimeId, url: `chrome-extension://${runtimeId}/index.html` };
 }
 
+function contentSender(frameId: number, documentId: string): MessageSender {
+  return {
+    id: runtimeId,
+    origin: 'https://a.example',
+    frameId,
+    documentId,
+    tab: { id: 7, url: 'https://a.example/path' },
+  };
+}
+
 test('EXT-04 revoked pairing wipes tokens while the host permission remains', async () => {
   const fake = createFakeChrome(runtimeId);
   const clock = createClock();
@@ -142,4 +152,81 @@ test('EXT-06 fresh session storage requires pairing again', async () => {
   await restarted.begin();
   const later = JSON.stringify(platform.requests.slice(before));
   assert.equal(later.includes(oldToken ?? ''), false);
+});
+
+test('EXT-02 rejects a non-zero frame on hello and a foreign documentId on ping', async () => {
+  const fake = createFakeChrome(runtimeId);
+  const clock = createClock();
+  const platform = createFakePlatform({
+    clock,
+    origin: stagingProfile.origin,
+    clientId: stagingProfile.clientId,
+    environment: stagingProfile.environment,
+  });
+  const runtime = await startRuntime({
+    profile: stagingProfile,
+    fetchImpl: platform.fetchImpl,
+    clock,
+    keys: createMemoryKeyStore(),
+    store: createChromeSessionStore(fake.session),
+    chrome: fake.chrome,
+    schedule: false,
+  });
+  const began = await fake.send({ type: 'pairing.begin', epoch: 1 }, panel(1)) as { ok: boolean; snapshot: ExtensionSnapshot };
+  assert.equal(began.ok, true);
+  platform.approve(began.snapshot.userCode ?? '');
+  await runtime.pump();
+  clock.advance(5000);
+  await runtime.pump();
+  const connected = await runtime.snapshot();
+  assert.equal(connected.phase, 'connected');
+  fake.grantOrigin('https://a.example');
+  const started = await fake.send({
+    type: 'site.start',
+    epoch: connected.epoch,
+    origin: 'https://a.example',
+    tabId: 7,
+  }, panel(connected.epoch)) as { ok: boolean; snapshot: ExtensionSnapshot };
+  assert.equal(started.ok, true);
+  assert.equal(started.snapshot.sites[0]?.state, 'pending');
+
+  const pairingBefore = {
+    begin: platform.counts.begin,
+    token: platform.counts.token,
+    nonce: platform.counts.nonce,
+    status: platform.counts.status,
+  };
+  assert.equal(fake.counts.connectNative, 0);
+
+  const frame = await fake.send({ type: 'site.hello' }, contentSender(3, 'doc-1')) as { ok: boolean; error?: string };
+  assert.equal(frame.ok, false);
+  assert.equal(frame.error, 'frame');
+  const stillPending = await runtime.snapshot();
+  assert.equal(stillPending.sites[0]?.state, 'pending');
+
+  const bound = await fake.send({ type: 'site.hello' }, contentSender(0, 'doc-1')) as { ok: boolean; error?: string; boundEpoch?: number };
+  assert.equal(bound.ok, true);
+  assert.equal(typeof bound.boundEpoch, 'number');
+  const active = await runtime.snapshot();
+  assert.equal(active.sites[0]?.state, 'active');
+
+  const foreign = await fake.send(
+    { type: 'site.ping', epoch: bound.boundEpoch },
+    contentSender(0, 'other'),
+  ) as { ok: boolean; error?: string };
+  assert.equal(foreign.ok, false);
+  assert.equal(foreign.error, 'session');
+  const stillActive = await runtime.snapshot();
+  assert.equal(stillActive.sites[0]?.state, 'active');
+  assert.deepEqual(
+    {
+      begin: platform.counts.begin,
+      token: platform.counts.token,
+      nonce: platform.counts.nonce,
+      status: platform.counts.status,
+    },
+    pairingBefore,
+  );
+  assert.equal(fake.counts.connectNative, 0);
+  runtime.stop();
 });
