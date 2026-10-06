@@ -39,6 +39,8 @@ npm run build:production
 
 `npm run test:browser` loads the e2e build in local Chromium against a loopback fake. It is not part of `npm test`.
 
+Rollup is pinned to 4.63.6 because 4.64.0's tree-shaking made the panel build take minutes, and the pin can be removed once a later Rollup builds the panel in seconds.
+
 ## What this version does
 
 - Device-authorization pairing, DPoP proofs, and bootstrap status for `runtime_kind: extension`.
